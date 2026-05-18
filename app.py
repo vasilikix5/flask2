@@ -1,4 +1,4 @@
-Μην ξεχασετε το Index.html στο templates 
+
 
 
 import random
