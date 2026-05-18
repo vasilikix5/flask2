@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Wordle</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121213; color: white;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+        }
+        .container { text-align: center; width: 350px; }
+        h1 { color: #f8f9fa; letter-spacing: 2px; margin-bottom: 20px; }
+        
+        .grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
+        .row { display: flex; justify-content: center; gap: 5px; }
+        .tile {
+            width: 50px; height: 50px; border: 2px solid #3a3a3c;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold; text-transform: uppercase;
+            border-radius: 5px;
+        }
+        
+        .correct { background-color: #538d4e; border-color: #538d4e; }
+        .present { background-color: #b59f3b; border-color: #b59f3b; }
+        .absent { background-color: #3a3a3c; border-color: #3a3a3c; }
+
+        input[type="text"] {
+            width: 60%; padding: 10px; border: 2px solid #3a3a3c; background: #121213;
+            color: white; font-size: 18px; text-align: center; border-radius: 5px; outline: none;
+            text-transform: uppercase;
+        }
+        input[type="text"]:focus { border-color: #538d4e; }
+        button {
+            padding: 11px 15px; background: #538d4e; color: white; border: none;
+            font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 16px;
+        }
+        button:hover { background: #43733f; }
+        
+        .message { margin-top: 20px; font-size: 18px; font-weight: bold; }
+        .error { color: #e74c3c; font-size: 14px; margin-bottom: 10px; }
+        .btn-reset {
+            display: inline-block; margin-top: 15px; padding: 8px 15px;
+            background: #3a3a3c; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;
+        }
+        .btn-reset:hover { background: #4a4a4c; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>WORDLE</h1>
+
+        <div class="grid">
+            {% for attempt in attempts %}
+                <div class="row">
+                    {% for char, status in attempt %}
+                        <div class="tile {{ status }}">{{ char }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            
+            {% for _ in range(6 - attempts|length) %}
+                <div class="row">
+                    <div class="tile"></div>
+                    <div class="tile"></div>
+                    <div class="tile"></div>
+                    <div class="tile"></div>
+                    <div class="tile"></div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if not game_over %}
+            <form method="POST">
+                <input type="text" name="guess" maxlength="5" placeholder="ΛΕΞΗ" autofocus required>
+                <button type="submit">OK</button>
+            </form>
+        {% else %}
+            <div class="message">
+                {% if won %}
+                    <p style="color: #538d4e;"> Συγχαρητήρια! Το βρήκες!</p>
+                {% else %}
+                    <p style="color: #e74c3c;"> Έχασες! Η λέξη ήταν: {{ secret_word }}</p>
+                {% endif %}
+                <a href="/reset" class="btn-reset">Παίξε Ξανά</a>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
